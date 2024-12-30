@@ -30,14 +30,8 @@ class Hero(pygame.sprite.Sprite):
 
     def update(self, *args):
         if args:
-            if args[0].type == pygame.KEYDOWN and args[0].key == pygame.K_UP:
-                self.rect.y -= 10
-            if args[0].type == pygame.KEYDOWN and args[0].key == pygame.K_DOWN:
-                self.rect.y += 10
-            if args[0].type == pygame.KEYDOWN and args[0].key == pygame.K_RIGHT:
-                self.rect.x += 10
-            if args[0].type == pygame.KEYDOWN and args[0].key == pygame.K_LEFT:
-                self.rect.x -= 10
+            self.rect.x += args[0][0]
+            self.rect.y += args[0][1]
 
 
 if __name__ == "__main__":
@@ -49,6 +43,9 @@ if __name__ == "__main__":
     running = True
     screen.fill("white")
 
+    fps = 30
+    clock = pygame.time.Clock()
+
     all_sprites = pygame.sprite.Group()
     Hero(all_sprites)
 
@@ -56,10 +53,19 @@ if __name__ == "__main__":
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.KEYDOWN:
-                all_sprites.update(event)
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_DOWN]:
+            all_sprites.update((0, 1))
+        if keys[pygame.K_UP]:
+            all_sprites.update((0, -1))
+        if keys[pygame.K_RIGHT]:
+            all_sprites.update((1, 0))
+        if keys[pygame.K_LEFT]:
+            all_sprites.update((-1, 0))
         screen.fill("white")
         all_sprites.draw(screen)
         pygame.display.flip()
+        clock.tick(fps)
 
     pygame.quit()
