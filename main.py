@@ -47,6 +47,23 @@ class Player(pygame.sprite.Sprite):
             self.rect.y -= dy * tile_height
 
 
+class Camera:
+    # зададим начальный сдвиг камеры
+    def __init__(self):
+        self.dx = 0
+        self.dy = 0
+
+    # сдвинуть объект obj на смещение камеры
+    def apply(self, obj):
+        obj.rect.x = (obj.rect.x + self.dx) % size[0] - tile_width
+        obj.rect.y = (obj.rect.y + self.dy) % size[1]
+
+    # позиционировать камеру на объекте target
+    def update(self, target):
+        self.dx = -(target.rect.x + target.rect.w // 2 - size[0] // 2)
+        self.dy = -(target.rect.y + target.rect.h // 2 - size[1] // 2)
+
+
 if __name__ == "__main__":
     pygame.init()
     pygame.display.set_caption('Пример 1')
@@ -72,14 +89,20 @@ if __name__ == "__main__":
     size = (level_x + 1) * tile_width, (level_y + 1) * tile_height
     screen = pygame.display.set_mode(size)
 
+    camera = Camera()
+    camera.update(player)
+    for sprite in all_sprites:
+        camera.apply(sprite)
+
+
     running = True
-    screen.fill("black")
 
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
+                screen.fill("black")
                 if event.key == pygame.K_UP:
                     player.update(0, -1)
                 if event.key == pygame.K_DOWN:
@@ -88,8 +111,12 @@ if __name__ == "__main__":
                     player.update(1, 0)
                 if event.key== pygame.K_LEFT:
                     player.update(-1, 0)
+                camera.update(player)
+                for sprite in all_sprites:
+                    camera.apply(sprite)
         all_sprites.draw(screen)
         player_group.draw(screen)
+
         pygame.display.flip()
 
     pygame.quit()
