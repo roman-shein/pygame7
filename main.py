@@ -65,6 +65,8 @@ class Camera:
 
 
 if __name__ == "__main__":
+    name = input()
+    level = load_level(name)
     pygame.init()
     pygame.display.set_caption('Пример 1')
 
@@ -84,7 +86,7 @@ if __name__ == "__main__":
     player_group = pygame.sprite.Group()
 
     tile_width = tile_height = 50
-    player, level_x, level_y = generate_level(load_level('level01.txt'))
+    player, level_x, level_y = generate_level(level)
 
     size = (level_x + 1) * tile_width, (level_y + 1) * tile_height
     screen = pygame.display.set_mode(size)
@@ -93,7 +95,6 @@ if __name__ == "__main__":
     camera.update(player)
     for sprite in all_sprites:
         camera.apply(sprite)
-
 
     running = True
 

@@ -1,13 +1,12 @@
 import pygame
-from func import load_image
+from func import load_image, terminate
 from const import *
 
 
 def start_screen(screen):
     intro_text = ["ЗАСТАВКА", "",
-                  "Правила игры",
-                  "Если в правилах несколько строк,",
-                  "приходится выводить их построчно"]
+                  "Правила игры", "",
+                  "Правил нет ;)"]
 
     fon = pygame.transform.scale(load_image('fon.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
