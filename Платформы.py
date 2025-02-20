@@ -8,13 +8,25 @@ class Hero(pygame.sprite.Sprite):
         self.image = pygame.Surface((a, a), pygame.SRCALPHA, 32)
         pygame.draw.rect(self.image, "blue", (0, 0, a, a))
         self.rect = pygame.Rect(x, y, a, a)
-        self.vx = 0
+
         self.vy = 1
 
     def update(self):
-        self.rect = self.rect.move(self.vx, self.vy)
-        if self.rect.y > height:
-            self.kill()
+        if not pygame.sprite.spritecollideany(self, horizontal_wall):
+            self.rect = self.rect.move(0, self.vy)
+            if self.rect.y > height:
+                self.kill()
+
+    def move_horizontal(self, x):
+        self.rect = self.rect.move(x, 0)
+
+
+class Platform(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__(horizontal_wall)
+        self.image = pygame.Surface((50, 10), pygame.SRCALPHA, 32)
+        pygame.draw.rect(self.image, "gray", (0, 0, 50, 10))
+        self.rect = pygame.Rect(x, y, 50, 10)
 
 
 if __name__ == "__main__":
@@ -27,6 +39,7 @@ if __name__ == "__main__":
     screen.fill("black")
 
     all_sprites = pygame.sprite.Group()
+    horizontal_wall = pygame.sprite.Group()
 
     fps = 50
     clock = pygame.time.Clock()
@@ -44,11 +57,18 @@ if __name__ == "__main__":
                     else:
                         hero.kill()
                         hero = Hero(20, *event.pos)
+                if event.button == 1:
+                    Platform(*event.pos)
+            if event.type == pygame.KEYDOWN:
+                if pygame.key.get_pressed()[pygame.K_LEFT]:
+                    hero.move_horizontal(-10)
+                if pygame.key.get_pressed()[pygame.K_RIGHT]:
+                    hero.move_horizontal(10)
         screen.fill("black")
         all_sprites.update()
         all_sprites.draw(screen)
+        horizontal_wall.draw(screen)
         pygame.display.flip()
         clock.tick(fps)
 
     pygame.quit()
-
